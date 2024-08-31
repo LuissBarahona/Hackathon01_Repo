@@ -5,7 +5,8 @@ def suma(a, b):
     return a + b
 
 #RONAL
-
+def resta(a, b):
+    return a - b 
 
 #ISAAC
 def multiplicacion(a, b):
