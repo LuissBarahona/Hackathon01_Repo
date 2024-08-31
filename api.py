@@ -8,7 +8,8 @@ def suma(a, b):
 
 
 #ISAAC
-
+def multiplicacion(a, b):
+    return a * b
 
 #CAMILO
 
