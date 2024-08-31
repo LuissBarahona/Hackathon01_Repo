@@ -4,7 +4,7 @@ Ronal Jesus Condor Blas
 
 Hola soy de la carrera de ciencias de la computación 
 
-1. Luis Barahona
+1. Luis Barahona 2
 	ING. Electrónica, 7mo ciclo, :), me gusta la natación
 
 Hola Soy Isaac Simeón
