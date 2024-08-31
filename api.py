@@ -1,58 +1,43 @@
 import re
 
-#LUIS
+# LUIS
 def suma(a, b):
     return a + b
 
-#RONAL
+# RONAL
 def resta(a, b):
-    return a - b 
+    return a - b
 
-#ISAAC
+# ISAAC
 def multiplicacion(a, b):
     return a * b
 
-#CAMILO
+# CAMILO
 def division(a, b):
     if b == 0:
         return "Error: División por cero"
     return a / b
 
-
-
-
-#INICIO LUIS
+# INICIO LUIS
 def calcular_operacion(operacion):
     try:
-        # Usar una expresión regular para dividir la operación en operandos y operador
-        match = re.match(r"(\d+\.?\d*)([\+\-\/])(\d+\.?\d)", operacion)
-        if not match:
-            return "Error: Operación inválida"
+        # Limpiar la operación para evitar posibles riesgos de seguridad
+        operacion = re.sub(r'[^0-9\+\-\*/\(\)\.]', '', operacion)
+        
+        # Evaluar la operación usando eval
+        resultado = eval(operacion)
+        return resultado
 
-        a = float(match.group(1))
-        operador = match.group(2)
-        b = float(match.group(3))
-
-        # Seleccionar la operación según el operador
-        if operador == '+':
-            return suma(a, b)
-        elif operador == '-':
-            return resta(a, b)
-        elif operador == '*':
-            return multiplicacion(a, b)
-        elif operador == '/':
-            return division(a, b)
-        else:
-            return "Error: Operador inválido"
-    except ValueError:
+    except ZeroDivisionError:
+        return "Error: División por cero"
+    except SyntaxError:
         return "Error: Operación inválida"
     except Exception as e:
         return f"Error: {e}"
 
-
 def main():
     print("Calculadora en línea de comandos")
-    print("Escribe una operación (por ejemplo, 2 + 2 o 2+2) y presiona Enter")
+    print("Escribe una operación (por ejemplo, 2 + 2 o (9+9)) y presiona Enter")
     print("Presiona 'c' para borrar la operación actual o 'q' para salir")
 
     while True:
@@ -73,7 +58,8 @@ def main():
             print("\nSaliendo...")
             break
 
-
-
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()
+
+# FIN LUIS
+
