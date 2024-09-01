@@ -19,7 +19,7 @@ def division(a, b):
     return a / b
 
 # INICIO LUIS
-def calcular_operacion(operacion):
+def calculate(operacion):
     try:
         # Limpiar la operación para evitar posibles riesgos de seguridad
         operacion = re.sub(r'[^0-9\+\-\*/\(\)\.]', '', operacion)
@@ -51,7 +51,7 @@ def main():
                 print("Operación borrada.")
                 continue
             else:
-                resultado = calcular_operacion(operacion)
+                resultado = calculate(operacion)
                 print(f"Resultado: {resultado}")
 
         except (KeyboardInterrupt, EOFError):
