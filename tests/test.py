@@ -81,7 +81,7 @@ class TestCalculator(unittest.TestCase):
             calculate("5 + a")
 
     def test_complex_operation_1(self):
-        self.assertEqual(calculate("3 + 5 * 2 - 8 / 4"), 9)
+        self.assertEqual(calculate("3 + 5 * 2 - 8 / 4"), 11.0)
 
     def test_complex_operation_2(self):
         self.assertEqual(calculate("10 + 2 * 6 / (4 - 2)"), 16)
