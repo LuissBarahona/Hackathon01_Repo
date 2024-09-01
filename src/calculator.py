@@ -26,10 +26,14 @@ def safe_eval(node):
         # Redondear a un decimal de precisión
         return round(result, 1)
 
-    elif isinstance(node, ast.Num):
-        return node.n
+    elif isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
+        return -safe_eval(node.operand)
+    
+    elif isinstance(node, ast.Constant):
+        return node.value
     else:
         raise ValueError("Error: Operación inválida")
+
 
 # Función de cálculo
 def calculate(operacion):
