@@ -1,42 +1,43 @@
+import ast
+import operator as op
 import re
 
-# Funciones matemáticas básicas
-def suma(a, b):
-    return a + b
+# Mapa de operadores permitidos
+OPERATORS = {
+    ast.Add: op.add,
+    ast.Sub: op.sub,
+    ast.Mult: op.mul,
+    ast.Div: op.truediv,
+    ast.Pow: op.pow,
+    ast.USub: op.neg
+}
 
-def resta(a, b):
-    return a - b
+def evaluate(node):
+    if isinstance(node, ast.Num):  # <number>
+        return node.n
+    elif isinstance(node, ast.BinOp):  # <left> <operator> <right>
+        left = evaluate(node.left)
+        right = evaluate(node.right)
+        return OPERATORS[type(node.op)](left, right)
+    elif isinstance(node, ast.UnaryOp):  # <operator> <operand>
+        operand = evaluate(node.operand)
+        return OPERATORS[type(node.op)](operand)
+    else:
+        raise TypeError(node)
 
-def multiplicacion(a, b):
-    return a * b
-
-def division(a, b):
-    if b == 0:
-        raise ZeroDivisionError("División por cero")
-    return a / b
-
-# Calculadora principal
-def calculate(operacion):
-    # Limpiar la operación para evitar posibles riesgos de seguridad
-    operacion = operacion.strip()
-    
-    if operacion == "":
+def calculate(expression):
+    # Limpiar la operación para evitar caracteres no permitidos
+    expression = expression.strip()
+    if expression == "":
         raise ValueError("Entrada vacía")
-    
-    # Validar si la operación contiene caracteres válidos
-    if not re.match(r'^[0-9\+\-\*/\(\)\.\s]+$', operacion):
+
+    if not re.match(r'^[0-9\+\-\*/\(\)\.\s]+$', expression):
         raise ValueError("Caracter inválido encontrado en la operación")
 
     try:
-        # Evaluar la operación usando eval de forma segura
-        resultado = eval(operacion, {"__builtins__": None}, {
-            "suma": suma,
-            "resta": resta,
-            "multiplicacion": multiplicacion,
-            "division": division
-        })
-        
-        return resultado
+        # Parsear la expresión
+        node = ast.parse(expression, mode='eval').body
+        return evaluate(node)
 
     except ZeroDivisionError:
         raise ZeroDivisionError("División por cero")
@@ -45,7 +46,6 @@ def calculate(operacion):
     except Exception as e:
         raise ValueError(f"Error: {str(e)}")
 
-# Ejecución principal
 def main():
     print("Calculadora en línea de comandos")
     print("Escribe una operación (por ejemplo, 2 + 2 o (9+9)) y presiona Enter")
