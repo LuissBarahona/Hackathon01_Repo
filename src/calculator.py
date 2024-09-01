@@ -38,6 +38,10 @@ def safe_eval(node):
 # Función de cálculo
 def calculate(operacion):
     try:
+        # Verificar si la operación está vacía o contiene solo espacios en blanco
+        if not operacion.strip():
+            raise ValueError("Error: Operación inválida - entrada vacía")
+
         # Limpiar la operación para evitar posibles riesgos de seguridad
         operacion = re.sub(r'[^0-9\+\-\*/\(\)\.\s]', '', operacion)
         
@@ -51,6 +55,7 @@ def calculate(operacion):
         raise SyntaxError("Error: Operación inválida")
     except Exception as e:
         raise ValueError(f"Error: {e}")
+
 
 def main():
     print("Calculadora en línea de comandos")
