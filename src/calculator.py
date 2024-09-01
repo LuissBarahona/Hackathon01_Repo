@@ -1,40 +1,51 @@
 import re
 
-# LUIS
+# Funciones matemáticas básicas
 def suma(a, b):
     return a + b
 
-# RONAL
 def resta(a, b):
     return a - b
 
-# ISAAC
 def multiplicacion(a, b):
     return a * b
 
-# CAMILO
 def division(a, b):
     if b == 0:
-        return "Error: División por cero"
+        raise ZeroDivisionError("División por cero")
     return a / b
 
-# INICIO LUIS
+# Calculadora principal
 def calculate(operacion):
+    # Limpiar la operación para evitar posibles riesgos de seguridad
+    operacion = operacion.strip()
+    
+    if operacion == "":
+        raise ValueError("Entrada vacía")
+    
+    # Validar si la operación contiene caracteres válidos
+    if not re.match(r'^[0-9\+\-\*/\(\)\.\s]+$', operacion):
+        raise ValueError("Caracter inválido encontrado en la operación")
+
     try:
-        # Limpiar la operación para evitar posibles riesgos de seguridad
-        operacion = re.sub(r'[^0-9\+\-\*/\(\)\.]', '', operacion)
+        # Evaluar la operación usando eval de forma segura
+        resultado = eval(operacion, {"__builtins__": None}, {
+            "suma": suma,
+            "resta": resta,
+            "multiplicacion": multiplicacion,
+            "division": division
+        })
         
-        # Evaluar la operación usando eval
-        resultado = eval(operacion)
         return resultado
 
     except ZeroDivisionError:
-        return "Error: División por cero"
+        raise ZeroDivisionError("División por cero")
     except SyntaxError:
-        return "Error: Operación inválida"
+        raise SyntaxError("Operación inválida")
     except Exception as e:
-        return f"Error: {e}"
+        raise ValueError(f"Error: {str(e)}")
 
+# Ejecución principal
 def main():
     print("Calculadora en línea de comandos")
     print("Escribe una operación (por ejemplo, 2 + 2 o (9+9)) y presiona Enter")
@@ -57,9 +68,8 @@ def main():
         except (KeyboardInterrupt, EOFError):
             print("\nSaliendo...")
             break
+        except Exception as e:
+            print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
-
-# FIN LUIS
-
