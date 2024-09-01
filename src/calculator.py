@@ -1,50 +1,52 @@
-import ast
-import operator as op
 import re
+import ast
+import operator
 
-# Mapa de operadores permitidos
+# Definición de operadores válidos
 OPERATORS = {
-    ast.Add: op.add,
-    ast.Sub: op.sub,
-    ast.Mult: op.mul,
-    ast.Div: op.truediv,
-    ast.Pow: op.pow,
-    ast.USub: op.neg
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv
 }
 
-def evaluate(node):
-    if isinstance(node, ast.Num):  # <number>
+# Evaluador seguro utilizando AST
+def safe_eval(node):
+    if isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Add, ast.Sub, ast.Mult, ast.Div)):
+        left = safe_eval(node.left)
+        right = safe_eval(node.right)
+        op_type = type(node.op)
+        
+        # Evitar división por cero
+        if op_type == ast.Div and right == 0:
+            raise ZeroDivisionError("Error: División por cero")
+        
+        result = OPERATORS[op_type](left, right)
+        
+        # Redondear a un decimal de precisión
+        return round(result, 1)
+
+    elif isinstance(node, ast.Num):
         return node.n
-    elif isinstance(node, ast.BinOp):  # <left> <operator> <right>
-        left = evaluate(node.left)
-        right = evaluate(node.right)
-        return OPERATORS[type(node.op)](left, right)
-    elif isinstance(node, ast.UnaryOp):  # <operator> <operand>
-        operand = evaluate(node.operand)
-        return OPERATORS[type(node.op)](operand)
     else:
-        raise TypeError(node)
+        raise ValueError("Error: Operación inválida")
 
-def calculate(expression):
-    # Limpiar la operación para evitar caracteres no permitidos
-    expression = expression.strip()
-    if expression == "":
-        raise ValueError("Entrada vacía")
-
-    if not re.match(r'^[0-9\+\-\*/\(\)\.\s]+$', expression):
-        raise ValueError("Caracter inválido encontrado en la operación")
-
+# Función de cálculo
+def calculate(operacion):
     try:
-        # Parsear la expresión
-        node = ast.parse(expression, mode='eval').body
-        return evaluate(node)
+        # Limpiar la operación para evitar posibles riesgos de seguridad
+        operacion = re.sub(r'[^0-9\+\-\*/\(\)\.\s]', '', operacion)
+        
+        # Parsear la operación usando ast
+        node = ast.parse(operacion, mode='eval').body
+        return safe_eval(node)
 
-    except ZeroDivisionError:
-        raise ZeroDivisionError("División por cero")
+    except ZeroDivisionError as e:
+        raise e
     except SyntaxError:
-        raise SyntaxError("Operación inválida")
+        raise SyntaxError("Error: Operación inválida")
     except Exception as e:
-        raise ValueError(f"Error: {str(e)}")
+        raise ValueError(f"Error: {e}")
 
 def main():
     print("Calculadora en línea de comandos")
@@ -68,8 +70,6 @@ def main():
         except (KeyboardInterrupt, EOFError):
             print("\nSaliendo...")
             break
-        except Exception as e:
-            print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
